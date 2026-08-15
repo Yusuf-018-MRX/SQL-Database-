@@ -1,0 +1,77 @@
+ -- 1
+SELECT COUNT(DISTINCT T.Id) AS TeachersCount
+FROM Teachers T 
+INNER JOIN Lectures L ON T.Id = L.TeacherId 
+INNER JOIN GroupsLectures GL ON L.Id = GL.LectureId 
+INNER JOIN Groups G ON GL.GroupId = G.Id 
+INNER JOIN Departments D ON G.DepartmentId = D.Id WHERE D.Name = N'Software Development';
+-- 2
+SELECT COUNT(*) AS LecturesCount
+FROM Lectures
+INNER JOIN Teachers ON Lectures.TeacherId = Teachers.Id
+WHERE Teachers.Name = N'Dave'
+AND Teachers.Surname = N'McQueen';
+-- 3
+SELECT COUNT(*) AS ClassesCount
+FROM Lectures
+WHERE LectureRoom = N'D201';
+-- 4
+SELECT LectureRoom, COUNT(*) AS LecturesCount
+FROM Lectures
+GROUP BY LectureRoom;
+-- 5
+SELECT SUM(G.StudentsCount) AS StudentsCount
+FROM Teachers T 
+INNER JOIN Lectures L ON T.Id = L.TeacherId 
+INNER JOIN GroupsLectures GL ON L.Id = GL.LectureId 
+INNER JOIN Groups G ON GL.GroupId = G.Id WHERE T.Name = N'Jack' AND T.Surname = N'Underhill';
+-- 6
+SELECT AVG(T.Salary) AS AverageSalary FROM Teachers T 
+INNER JOIN Lectures L ON T.Id = L.TeacherId
+INNER JOIN GroupsLectures GL ON L.Id = GL.LectureId 
+INNER JOIN Groups G ON GL.GroupId = G.Id 
+INNER JOIN Departments D ON G.DepartmentId = D.Id
+INNER JOIN Faculties F ON D.FacultyId = F.Id WHERE F.Name = N'Computer Science';
+-- 7
+SELECT MIN(StudentsCount) AS MinimumStudents,
+MAX(StudentsCount)
+AS MaximumStudents FROM Groups;
+-- 8
+SELECT AVG(Financing) AS AverageFinancing 
+FROM Departments;
+-- 9
+SELECT T.Name + N' ' + T.Surname AS TeacherName,
+COUNT(DISTINCT L.SubjectId) AS SubjectsCount 
+FROM Teachers T 
+LEFT JOIN Lectures L ON T.Id = L.TeacherId GROUP BY T.Name, 
+T.Surname;
+-- 10
+SELECT DayOfWeek,
+COUNT(*) AS LecturesCount
+FROM Lectures
+GROUP BY DayOfWeek
+ORDER BY DayOfWeek;
+-- 11
+SELECT L.LectureRoom,
+COUNT(DISTINCT D.Id) AS DepartmentsCount
+FROM Lectures L 
+INNER JOIN GroupsLectures GL ON L.Id = GL.LectureId 
+INNER JOIN Groups G ON GL.GroupId = G.Id
+INNER JOIN Departments D ON G.DepartmentId = D.Id GROUP BY L.LectureRoom;
+-- 12
+SELECT F.Name AS FacultyName, 
+COUNT(DISTINCT L.SubjectId) AS SubjectsCount
+FROM Faculties F 
+INNER JOIN Departments D ON F.Id = D.FacultyId 
+INNER JOIN Groups G ON D.Id = G.DepartmentId 
+INNER JOIN GroupsLectures GL ON G.Id = GL.GroupId 
+INNER JOIN Lectures L ON GL.LectureId = L.Id GROUP BY F.Name;
+-- 13
+SELECT T.Name + N' ' + T.Surname AS TeacherName,
+L.LectureRoom, COUNT(*) AS LecturesCount
+FROM Teachers T 
+INNER JOIN Lectures L ON T.Id = L.TeacherId 
+GROUP BY T.Name,
+T.Surname,
+L.LectureRoom ORDER BY TeacherName,
+L.LectureRoom;
