@@ -1,0 +1,123 @@
+IF DB_ID('Academy') IS NOT NULL
+BEGIN
+    ALTER DATABASE Academy SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE Academy;
+END
+GO
+CREATE DATABASE Academy;
+GO
+USE Academy;
+GO
+CREATE TABLE Faculties
+(
+    Id INT IDENTITY ( 1 , 1 )  NOT NULL PRIMARY KEY ,
+    Name NVARCHAR(100) NOT NULL UNIQUE ,
+    CONSTRAINT CK_Faculties_Name CHECK (LEN(Name) > 0)
+);
+GO
+
+CREATE TABLE Departments
+(
+    Id INT IDENTITY( 1 , 1 ) NOT NULL PRIMARY KEY ,
+    Financing MONEY NOT NULL DEFAULT 0 ,
+    Name NVARCHAR( 100 ) NOT NULL UNIQUE ,
+    FacultyId INT NOT NULL ,
+    CONSTRAINT CK_Departments_Financing CHECK ( Financing >= 0 ) ,
+    CONSTRAINT CK_Departments_Name CHECK ( LEN ( Name ) > 0) , 
+    CONSTRAINT FK_Departments_Faculties FOREIGN KEY ( FacultyId ) REFERENCES Faculties ( Id )
+);
+GO
+
+CREATE TABLE Groups
+(
+    Id INT IDENTITY ( 1 , 1 ) NOT NULL PRIMARY KEY ,
+    Name NVARCHAR ( 10 ) NOT NULL UNIQUE ,
+    Year INT NOT NULL ,
+    DepartmentId INT NOT NULL ,
+    StudentsCount INT NOT NULL ,
+    CONSTRAINT CK_Groups_Name CHECK ( LEN ( Name ) > 0 ) ,
+    CONSTRAINT CK_Groups_Year CHECK ( Year BETWEEN 1 AND 5 ) ,
+    CONSTRAINT CK_Groups_StudentsCount CHECK ( StudentsCount >= 0 ) ,
+    CONSTRAINT FK_Groups_Departments FOREIGN KEY ( DepartmentId ) REFERENCES Departments ( Id )
+);
+GO
+CREATE TABLE Subjects
+(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL UNIQUE,
+    CONSTRAINT CK_Subjects_Name CHECK (LEN(Name) > 0)
+);
+GO
+CREATE TABLE Teachers
+(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    Name NVARCHAR(MAX) NOT NULL,
+    Salary MONEY NOT NULL,
+    Surname NVARCHAR(MAX) NOT NULL,
+    CONSTRAINT CK_Teachers_Name CHECK (LEN(Name) > 0),
+    CONSTRAINT CK_Teachers_Salary CHECK (Salary > 0),
+    CONSTRAINT CK_Teachers_Surname CHECK (LEN(Surname) > 0)
+);
+GO
+CREATE TABLE Lectures
+(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    DayOfWeek INT NOT NULL,
+    LectureRoom NVARCHAR(MAX) NOT NULL,
+    SubjectId INT NOT NULL,
+    TeacherId INT NOT NULL,
+    CONSTRAINT CK_Lectures_DayOfWeek CHECK (DayOfWeek BETWEEN 1 AND 7),
+    CONSTRAINT CK_Lectures_LectureRoom CHECK (LEN(LectureRoom) > 0),
+    CONSTRAINT FK_Lectures_Subjects FOREIGN KEY (SubjectId) REFERENCES Subjects(Id),
+    CONSTRAINT FK_Lectures_Teachers FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
+);
+GO
+CREATE TABLE GroupsLectures
+(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    GroupId INT NOT NULL,
+    LectureId INT NOT NULL,
+    CONSTRAINT FK_GroupsLectures_Groups  FOREIGN KEY (GroupId) REFERENCES Groups(Id),
+    CONSTRAINT FK_GroupsLectures_Lectures  FOREIGN KEY (LectureId) REFERENCES Lectures(Id),
+    CONSTRAINT UQ_GroupsLectures_GroupLecture UNIQUE (GroupId, LectureId)
+);
+GO
+INSERT INTO Faculties (Name)
+VALUES(N'Computer Science') , (N'Software Engineering') , (N'Information Technology') , (N'Mathematics') ;
+GO
+INSERT INTO Departments (Financing, Name, FacultyId)
+VALUES (150000, N'Software Development' , 2 ) , (120000, N'Computer Science' , 1 ) , (95000, N'Information Technology' , 3 ) , ( 80000, N'Mathematics', 4) , (110000, N'Software Engineering' , 2 ) ;
+GO
+
+INSERT INTO Groups (Name, Year, DepartmentId, StudentsCount)
+VALUES
+(N'SD101', 1, 1, 25) , (N'SD201', 2, 1, 30) , (N'CS101', 1, 2, 28), (N'CS201', 2, 2, 22), (N'IT101', 1, 3, 35), (N'MA101', 1, 4, 20), (N'SE301', 3, 5, 27);
+GO
+INSERT INTO Subjects (Name)
+VALUES
+(N'Database Theory'), (N'Programming'), (N'Algorithms'), (N'Data Structures'), (N'Web Development'), (N'Mathematics'), (N'Operating Systems'), (N'Computer Networks');
+GO
+
+INSERT INTO Teachers (Name, Salary, Surname)
+VALUES
+(N'Dave', 2500, N'McQueen'), (N'Jack', 2800, N'Underhill'), (N'John', 2200, N'Smith'), (N'Emily', 3100, N'Johnson'), (N'Michael', 2700, N'Brown'), (N'Sarah', 2900, N'Davis'), (N'Daniel', 2400, N'Wilson'), (N'Laura', 3200, N'Taylor');
+GO
+
+INSERT INTO Lectures (DayOfWeek, LectureRoom, SubjectId, TeacherId)
+VALUES
+(1, N'D201', 1, 1), (2, N'D201', 2, 1), (3, N'D202', 3, 1), (4, N'D203', 1, 2), (5, N'D201', 4, 2), (1, N'D202', 5, 3), (2, N'D204', 2, 3), (3, N'D205', 6, 4), (4, N'D204', 7, 4), (5, N'D206', 8, 5), (1, N'D201', 3, 5), (2, N'D202', 1, 6), (3, N'D203', 5, 6), (4, N'D205', 6, 7), (5, N'D206', 7, 7), (1, N'D201', 4, 8), (2, N'D204', 8, 8), (3, N'D201', 2, 1), (4, N'D202', 1, 2), (5, N'D203', 3, 2);
+GO
+
+INSERT INTO GroupsLectures (GroupId, LectureId)
+VALUES
+(1, 1), (1, 2), (1, 3), (2, 4), (2, 5), (2, 18), (3, 6), (3, 7), (3, 8), (4, 9), (4, 10), (4, 19), (5, 11), (5, 12), (5, 13), (6, 14), (6, 15), (6, 20), (7, 16), (7, 17), (7, 10);
+GO
+
+SELECT * FROM Faculties;
+SELECT * FROM Departments;
+SELECT * FROM Groups;
+SELECT * FROM Subjects;
+SELECT * FROM Teachers;
+SELECT * FROM Lectures;
+SELECT * FROM GroupsLectures;
+GO
