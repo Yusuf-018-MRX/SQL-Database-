@@ -1,0 +1,75 @@
+USE Academy;
+GO
+-- 1 Task
+SELECT Name, Financing, Id
+FROM Departments;
+GO
+-- 2 Task
+SELECT Name AS [Group Name], Rating AS [Group Rating]
+FROM Groups;
+GO
+-- 3 Task
+SELECT Surname,
+    Salary * 100.0 / NULLIF(Premium, 0) AS [Salary to Premium Percentage],
+    Salary * 100.0 / NULLIF(Salary + Premium, 0) AS [Salary to Total Salary Percentage]
+FROM Teachers;
+GO
+-- 4 Task
+SELECT  'The dean of faculty ' + Name + ' is ' + Dean AS [Faculty Information]
+FROM Faculties;
+GO
+-- 5 Task 
+SELECT Name
+FROM Teachers
+WHERE IsProfessor = 1 AND Salary > 1050;
+GO
+-- 6 Task
+SELECT Name
+FROM Departments
+WHERE Financing < 11000 OR Financing > 25000;
+GO
+-- 7 Task
+SELECT Name
+FROM Faculties
+WHERE Name <> 'Computer Science';
+GO
+-- 8 Task
+SELECT Name, Position
+FROM Teachers
+WHERE IsProfessor = 0;
+GO
+-- 9 Task
+SELECT Surname, Position, Salary, Premium
+FROM Teachers
+WHERE IsAssistant = 1 AND Premium BETWEEN 160 AND 550;
+GO
+-- 10 Task
+SELECT Surname, Salary
+FROM Teachers
+WHERE IsAssistant = 1;
+GO
+-- 11 Task
+SELECT Surname, Position
+FROM Teachers
+WHERE EmploymentDate < '2000-01-01';
+GO
+-- 12 Task
+SELECT Name AS [Name of Department]
+FROM Departments
+WHERE Name <= 'Software Development Department' ORDER BY Name ASC;
+GO
+-- 13 Task
+SELECT Name
+FROM Teachers
+WHERE IsAssistant = 1 AND Salary + Premium <= 1200;
+GO
+-- 14 Task
+SELECT Name
+FROM Groups
+WHERE Year = 5 AND Rating BETWEEN 2 AND 4;
+GO
+-- 15 Task
+SELECT Name
+FROM Teachers
+WHERE IsAssistant = 1 AND (Salary < 550 OR Premium < 200);
+GO
